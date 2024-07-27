@@ -5,11 +5,11 @@ import morgan from 'morgan';
 import { Server } from 'http';
 import router from './routes';
 import errorRequestHandler from './middlewares/errorHandler';
+import envConf from '../../env.conf';
 
 const app = express();
 
-// Use an env configuation file to define your port so that you have a single source for all your env configurations instead of using process.env everywhere
-const PORT = process.env.PORT || 5000;
+const PORT = envConf.PORT;
 
 app.use(
     cors({
