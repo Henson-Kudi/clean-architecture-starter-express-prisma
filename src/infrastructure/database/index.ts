@@ -1,6 +1,6 @@
 // Your database configuration
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
-const database = new PrismaClient()
+const database = new PrismaClient();
 
-export default database
+export default database;
