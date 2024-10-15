@@ -14,3 +14,39 @@ datasource db {
 }
 
 // Define your database models below
+
+model Discount {
+  id                String   @id @default(uuid())
+  // name  String @unique() // e.g super sale 2024, black friday, etc
+  type              DiscountType
+  couponCode String? @unique()
+  value             Float    // percentage or fixed value
+  conditionType DiscountConditionType // product_based, order_based, shipping_based, customer_based
+  conditions         Json //Value to query products which are eligible for this discount
+  isActive          Boolean  @default(true)
+  isDeleted Boolean @default(false)
+  validFrom         DateTime
+  validUntil        DateTime
+  usageLimit        Int?
+  usageCount        Int      @default(0)
+  autoApply         Boolean  @default(false)
+  createdBy String
+  lastModifiedBy String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([isActive, validFrom, validUntil, conditionType])
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+  FREE_SHIPPING
+}
+
+enum DiscountConditionType {
+product_based
+order_based
+shipping_based
+customer_based
+}
