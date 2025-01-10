@@ -16,37 +16,107 @@ datasource db {
 // Define your database models below
 
 model Discount {
-  id                String   @id @default(uuid())
-  // name  String @unique() // e.g super sale 2024, black friday, etc
-  type              DiscountType
-  couponCode String? @unique()
-  value             Float    // percentage or fixed value
-  conditionType DiscountConditionType // product_based, order_based, shipping_based, customer_based
-  conditions         Json //Value to query products which are eligible for this discount
-  isActive          Boolean  @default(true)
-  isDeleted Boolean @default(false)
-  validFrom         DateTime
-  validUntil        DateTime
-  usageLimit        Int?
-  usageCount        Int      @default(0)
-  autoApply         Boolean  @default(false)
-  createdBy String
-  lastModifiedBy String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  type        DiscountType
+  value       Decimal     // Percentage or fixed amount
+  isActive    Boolean     @default(true)
+  isDeleted    Boolean     @default(false)
+  startDate   DateTime
+  endDate     DateTime?
+  autoApply   Boolean?    @default(false)
+  discountStrategy DiscountStrategy
+  createdBy   String
+  lastUpdatedBy String?
 
-  @@index([isActive, validFrom, validUntil, conditionType])
+  // Filter conditions for product matching. If you want to apply directly on products. Applied when discount is created
+  filterRules Json?        // Stored as JSON object containing filter criteria
+
+
+  // For bulk discounts
+  bulkDiscountStrategy BulkDiscountStrategy?
+  
+  // For coupon-based discounts
+  couponCode  String?     @unique
+  usageLimit  Int?        // Max number of times discount can be used
+  usedCount   Int         @default(0)
+  
+  // Conditions. If you want to apply on coupons (applied at checkout)
+  conditions  DiscountCondition[]
+
+  appliedOrders    DiscountOrder[]
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
+
+model DiscountCondition {
+  id          String      @id @default(uuid())
+  discountId  String
+  discount    Discount    @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  type        ConditionType
+  operator    ConditionOperator
+  value       String      // JSON string for complex conditions
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model DiscountOrder {
+  id          String      @id @default(uuid())
+  orderId   String      // Reference to order in order service
+  userId    String      // Reference to user in user service
+  discountId  String
+  discount    Discount    @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([orderId, discountId])
+  @@unique([userId, discountId])
+  @@index([userId, orderId, discountId])
+  @@index([userId])
+  @@index([discountId])
+  @@index([orderId])
+}
+
 
 enum DiscountType {
   PERCENTAGE
-  FIXED
+  FIXED_AMOUNT
+  BUY_X_GET_Y
   FREE_SHIPPING
 }
 
-enum DiscountConditionType {
-product_based
-order_based
-shipping_based
-customer_based
+enum ConditionType {
+  MINIMUM_PURCHASE
+  CART_QUANTITY
+  PRODUCT_CATEGORY
+  USER_GROUP
+  FIRST_PURCHASE
+  TIME_OF_DAY
+  DAY_OF_WEEK
+}
+
+enum ConditionOperator {
+  EQUALS
+  GREATER_THAN
+  GREATER_THAN_EQUAL
+  LESS_THAN
+  LESS_THAN_EQUAL
+  IN
+  NOT_IN
+  BETWEEN
+}
+
+enum BulkDiscountStrategy {
+  OVERRIDE        // Override existing discounts
+  STACK           // Apply on top of existing discounts
+  SKIP_EXISTING   // Skip products with existing discounts
+}
+
+enum DiscountStrategy {
+  BULK_PRODUCT     // Applied directly to products
+  COUPON          // Applied at checkout via coupon
 }

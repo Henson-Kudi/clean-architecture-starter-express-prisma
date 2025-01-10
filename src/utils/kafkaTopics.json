@@ -1,6 +1,12 @@
 {
-    "discountCreated": "discountCreated",
-    "discountUpdated": "discountUpdated",
-    "discountDeleted": "discountDeleted",
-    "discountsDeleted": "discountsDeleted"
+  "discountCreated": "discount.created",
+  "discountUpdated": "discount.updated",
+  "discountDeleted": "discount.deleted",
+  "discountsDeleted": "discounts.deleted",
+  "discountsDeactivated": "discounts.deactivated",
+  "discountApplied": "discount.applied",
+  "subscriptions": {
+    "orderCreated": "order.created",
+    "discountApplied": "product.discountapplied"
+  }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "clean-architecture-prisma",
+  "name": "coupons-service",
   "version": "1.0.0",
-  "description": "Clean code architecture with prisma",
+  "description": "Discounts and promotions management for e-commerce platform",
   "main": "index.ts",
   "scripts": {
     "test": "echo Error: No test scripts added",

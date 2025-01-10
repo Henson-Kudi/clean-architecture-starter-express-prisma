@@ -1,6 +1,6 @@
 // Inject all your environment variables here
 
-import { NODE_ENV } from "./domain/enums/nodeEnv";
+import { NODE_ENV } from './domain/enums/nodeEnv';
 
 /* eslint-disable no-process-env */
 export default {
