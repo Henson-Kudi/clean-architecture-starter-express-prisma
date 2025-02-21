@@ -7,6 +7,6 @@
   "discountApplied": "discount.applied",
   "subscriptions": {
     "orderCreated": "order.created",
-    "discountApplied": "product.discountapplied"
+    "discountApplied" : "product.discountapplied"
   }
 }
